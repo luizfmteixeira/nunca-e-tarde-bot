@@ -94,7 +94,7 @@ public class NuncaETardeBot {
 
         LocalDate hoje = LocalDate.now();
         DateTime timeMin = new DateTime(hoje.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
-        DateTime timeMax = new DateTime(hoje.plusDays(20).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
+        DateTime timeMax = new DateTime(hoje.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
 
         Events events = service.events().list(CALENDAR_ID)
                 .setTimeMin(timeMin)
