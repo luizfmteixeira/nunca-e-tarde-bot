@@ -2,53 +2,35 @@ name: Executar Bot Diariamente
 
 on:
   schedule:
-    # CRON: Minuto Hora Dia Mês Dia-da-semana
-    # TODO DIA ÀS 10:00 DA MANHÃ (Horário UTC)
-    # Para horário Brasil (UTC-3), subtraia 3 horas
-    # Ex: 10:00 BR = 13:00 UTC
-    - cron: '0 7 * * *'  # 10:00 horário Brasil
-
-  workflow_dispatch:  # Permite rodar manualmente
+    - cron: '0 7 * * *'  # 10:00 BR (13:00 UTC)
+  workflow_dispatch:
 
 jobs:
   executar-bot:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Baixa o código
-      - name: Checkout código
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      # 2. Configura Java (VERSÃO CORRIGIDA)
-      - name: Configurar Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'  # OU 'corretto' ou 'zulu'
+          distribution: 'temurin'
 
-      # 3. Executa Maven
-      - name: Compilar com Maven
+      - name: Debug Timezone
         run: |
-          mvn --version
-          mvn clean compile
+          sudo timedatectl set-timezone America/Sao_Paulo
+          echo "🕐 Timezone ajustado:"
+          date
 
-      # 4. Executa o bot
-      - name: Rodar Bot
+      - name: Compilar
+        run: mvn clean compile
+
+      - name: Executar Bot
         env:
-          # VARIÁVEIS DE AMBIENTE - Configure no GitHub Secrets
-          # Exemplo: criar secret "GOOGLE_CREDENTIALS_JSON"
-          CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}  # 🔥 NOME EXATO!
         run: |
-          echo '🚀 Iniciando execução do bot...'
-          echo '📅 Data: $(date)'
-          
-          # Se precisar criar arquivo de credenciais a partir da variável
-          if [ -n "$CREDENTIALS_JSON" ]; then
-            echo "$CREDENTIALS_JSON" > credentials.json
-            echo '✅ Credenciais criadas'
-          fi
-          
-          # Executa o bot
+          echo "🚀 Iniciando bot..."
+          echo "📏 Tamanho da credencial: ${#SERVICE_ACCOUNT_JSON} caracteres"
           mvn exec:java -Dexec.mainClass="com.nuncaetardebot.NuncaETardeBot"
-          
-          echo '🎉 Bot executado com sucesso!'
