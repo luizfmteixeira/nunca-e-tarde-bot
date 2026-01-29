@@ -1,0 +1,36 @@
+name: Bot Diário Nunca é Tarde
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # 9:00 AM todo dia (horário Brasil)
+  workflow_dispatch:      # Rodar manualmente
+
+jobs:
+  bot-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      - name: Compile
+        run: mvn clean compile -q
+
+      - name: Run Bot
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          WHATSAPP_ACCESS_TOKEN: ${{ secrets.WHATSAPP_ACCESS_TOKEN }}
+        run: |
+          echo "⏰ Iniciando bot às $(date)"
+          mvn exec:java -Dexec.mainClass="com.nuncaetardebot.NuncaETardeBot"
+          echo "✅ Bot executado com sucesso!"
+
+      - name: Notificar sucesso (opcional)
+        if: success()
+        run: echo "Bot rodou com sucesso!"
