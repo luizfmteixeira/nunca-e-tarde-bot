@@ -6,7 +6,7 @@ on:
     # TODO DIA ÀS 10:00 DA MANHÃ (Horário UTC)
     # Para horário Brasil (UTC-3), subtraia 3 horas
     # Ex: 10:00 BR = 13:00 UTC
-    - cron: '0 13 * * *'  # 10:00 horário Brasil
+    - cron: '0 7 * * *'  # 10:00 horário Brasil
 
   workflow_dispatch:  # Permite rodar manualmente
 
