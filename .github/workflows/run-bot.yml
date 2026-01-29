@@ -2,12 +2,15 @@ name: Executar Bot Diariamente
 
 on:
   schedule:
-    - cron: '0 7 * * *'  # 10:00 BR (13:00 UTC)
+    - cron: '0 13 * * *'  # 10:00 BR (13:00 UTC)
   workflow_dispatch:
 
 jobs:
   executar-bot:
     runs-on: ubuntu-latest
+    env:  # ⭐⭐ VARIÁVEIS AQUI, NO NÍVEL DO JOB ⭐⭐
+      SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+      TZ: America/Sao_Paulo
 
     steps:
       - uses: actions/checkout@v3
@@ -18,19 +21,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Debug Timezone
+      - name: Debug - Verificar variáveis
         run: |
-          sudo timedatectl set-timezone America/Sao_Paulo
-          echo "🕐 Timezone ajustado:"
+          echo "🔍 Debug informações:"
+          echo "Timezone: $TZ"
+          echo "Credencial tamanho: ${#SERVICE_ACCOUNT_JSON} caracteres"
+          echo "Primeiros 50 chars: ${SERVICE_ACCOUNT_JSON:0:50}"
           date
 
       - name: Compilar
         run: mvn clean compile
 
       - name: Executar Bot
-        env:
-          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}  # 🔥 NOME EXATO!
         run: |
           echo "🚀 Iniciando bot..."
-          echo "📏 Tamanho da credencial: ${#SERVICE_ACCOUNT_JSON} caracteres"
           mvn exec:java -Dexec.mainClass="com.nuncaetardebot.NuncaETardeBot"
