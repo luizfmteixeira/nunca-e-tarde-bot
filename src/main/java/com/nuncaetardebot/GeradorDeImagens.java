@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GeradorDeImagens {
 
@@ -105,24 +107,47 @@ public class GeradorDeImagens {
     }
 
     private String convertGoogleDriveUrl(String url) {
-        // Se já estiver no formato direto, retorna como está
-        if (url.contains("uc?export=view")) {
+        if (url == null || url.isEmpty()) {
             return url;
         }
 
-        // Se for URL do Google Drive, extrai o ID e converte
-        if (url.contains("drive.google.com") && url.contains("id=")) {
-            String fileId = url.substring(url.indexOf("id=") + 3);
+        // Se já está no formato de download, retorna
+        if (url.contains("uc?export=download") || url.contains("usercontent.google.com")) {
+            return url;
+        }
 
-            // Remove qualquer parâmetro adicional após o ID
+        String fileId = null;
+
+        // Formato: https://drive.google.com/file/d/FILE_ID/view
+        if (url.contains("/d/")) {
+            Pattern pattern = Pattern.compile("/d/([a-zA-Z0-9_-]+)");
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.find()) {
+                fileId = matcher.group(1);
+            }
+        }
+
+        // Formato: https://drive.google.com/uc?id=FILE_ID&export=view
+        if (fileId == null && url.contains("id=")) {
+            fileId = url.substring(url.indexOf("id=") + 3);
             if (fileId.contains("&")) {
                 fileId = fileId.substring(0, fileId.indexOf("&"));
             }
-
-            return "https://drive.google.com/uc?export=view&id=" + fileId;
         }
 
-        // Para outras URLs, retorna como está
+        // Formato: https://drive.google.com/open?id=FILE_ID
+        if (fileId == null && url.contains("open?id=")) {
+            fileId = url.substring(url.indexOf("open?id=") + 8);
+            if (fileId.contains("&")) {
+                fileId = fileId.substring(0, fileId.indexOf("&"));
+            }
+        }
+
+        if (fileId != null && !fileId.isEmpty()) {
+            // Link que funciona atualmente para imagens públicas
+            return "https://drive.usercontent.google.com/download?id=" + fileId + "&export=download";
+        }
+
         return url;
     }
 }

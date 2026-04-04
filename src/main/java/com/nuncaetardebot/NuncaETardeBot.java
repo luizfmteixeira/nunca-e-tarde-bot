@@ -14,6 +14,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class NuncaETardeBot {
@@ -26,9 +27,12 @@ public class NuncaETardeBot {
             System.out.println("Iniciando verificação de aniversários...");
 
             List<Aniversariante> aniversariantes = getAniversariosHoje();
+            aniversariantes.clear();
 
             if (aniversariantes.isEmpty()) {
                 System.out.println("Nenhum aniversariante hoje.");
+                WhatsappService.sendTextMessage("Hoje não temos aniversariantes. Responda alguma coisa para manter a conexão aberta🎉");
+
                 return;
             }
 
@@ -93,8 +97,8 @@ public class NuncaETardeBot {
                 .build();
 
         LocalDate hoje = LocalDate.now();
-        DateTime timeMin = new DateTime(hoje.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
-        DateTime timeMax = new DateTime(hoje.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
+        DateTime timeMin = new DateTime(hoje.atStartOfDay().toInstant(ZoneOffset.ofHours(-3)).toEpochMilli());
+        DateTime timeMax = new DateTime(hoje.atTime(23,59).toInstant(ZoneOffset.ofHours(-3)).toEpochMilli());
 
         Events events = service.events().list(CALENDAR_ID)
                 .setTimeMin(timeMin)
