@@ -15,7 +15,7 @@ public class WhatsappService {
     private static final String WHATSAPP_API_URL = "https://graph.facebook.com/v22.0/";
     private static final String PHONE_NUMBER_ID = "707371722470584";
     private static final String ACCESS_TOKEN = "EAAPEJa5xexIBQlPQQptl2fFsYxZB4nsuGs3WJ6ZC9QT6KM8q0XR2vJnYS1H8jdndh6CXL0i2MvzDF8ZAvCUo6Bfo1ctFOmMeh8vHm7Yyh1gJDIAOh5yOAe80Mfhxs2CZAlhxx8zWHHEjc7sROYkgbTedpth00ChYn6I9X93y7gYYWuwESKQUbBLRERuZCny2zxwZDZD";
-    private static final String DESTINO_TESTE = "5541984980021";
+    private static final String DESTINO_TESTE = "5541997238520";
 
     public static boolean sendImageMessage(String mediaId, String caption) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {

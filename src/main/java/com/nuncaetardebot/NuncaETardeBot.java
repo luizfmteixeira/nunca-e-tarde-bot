@@ -27,7 +27,6 @@ public class NuncaETardeBot {
             System.out.println("Iniciando verificação de aniversários...");
 
             List<Aniversariante> aniversariantes = getAniversariosHoje();
-            aniversariantes.clear();
 
             if (aniversariantes.isEmpty()) {
                 System.out.println("Nenhum aniversariante hoje.");
