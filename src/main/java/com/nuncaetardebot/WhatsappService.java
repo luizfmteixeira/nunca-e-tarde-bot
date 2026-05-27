@@ -9,6 +9,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Random;
 
 public class WhatsappService {
 
@@ -99,6 +100,25 @@ public class WhatsappService {
             System.err.println("❌ Erro ao enviar mensagem: " + e.getMessage());
             return false;
         }
+    }
+
+    public static boolean sendMaintenanceMessage() {
+        // Lista de mensagens variadas para não parecer spam
+        String[] mensagens = {
+                "🌙 Boa noite! Deus abençoe sua noite de descanso.",
+                "✨ Que seu dia tenha sido abençoado! Até amanhã.",
+                "🙏 Obrigado por fazer parte da nossa comunidade!",
+                "📖 'Em Deus faremos proezas' - Salmo 108:13",
+                "🌟 Você é especial para nós! Tenha uma ótima noite."
+        };
+
+        // Escolhe uma mensagem aleatória
+        String mensagem = mensagens[new Random().nextInt(mensagens.length)];
+
+        // ACRESCENTA O AVISO IMPORTANTE
+        mensagem += " (Esta mensagem é automática para manutenção do serviço)";
+
+        return sendTextMessage(mensagem);
     }
 
     public static String criarMensagem(String aniversario) {

@@ -1,0 +1,26 @@
+name: Mensagem de Manutenção (18h)
+
+on:
+  schedule:
+    - cron: '0 19 * * *'  # 18:00 BR (21:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  enviar-manutencao:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/Sao_Paulo
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Executar manutenção
+        run: |
+          mvn clean compile
+          mvn exec:java -Dexec.mainClass="com.nuncaetardebot.ManutencaoBot"
